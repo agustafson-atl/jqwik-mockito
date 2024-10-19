@@ -1,0 +1,143 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+}
+
+wrapper {
+    gradleVersion = '8.8'
+}
+
+static isSnapshotRelease(versionString) {
+    versionString.endsWith('SNAPSHOT')
+}
+
+ext {
+    moduleName = 'net.jqwik.mockito'
+    junitPlatformVersion = '1.8.1'
+    opentest4jVersion = '1.2.0'
+    assertJVersion = '3.15.0'
+    mockitoVersion = '3.3.3'
+    jqwikVersion = '1.6.5'
+    jqwikMockitoVersion = '0.5.3-SNAPSHOT'
+    hikariCpVersion =  '3.4.5'
+    jedisClientVersion = '3.3.0'
+    httpClientVersion = '4.5.12'
+    postgreSqlClientVersion = '42.2.16'
+    mySqlClientVersion = '8.0.21'
+    isSnapshotRelease = isSnapshotRelease(jqwikMockitoVersion)
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+group = moduleName
+version = jqwikMockitoVersion
+
+jar {
+    archiveBaseName.set('jqwik-mockito')
+    archiveVersion.set("${jqwikMockitoVersion}")
+    manifest {
+        attributes('Automatic-Module-Name': "${moduleName}")
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+compileTestJava {
+    options.compilerArgs += '-parameters'
+    options.encoding = 'UTF-8'
+}
+
+test {
+    useJUnitPlatform {
+        includeEngines 'jqwik'
+    }
+
+    include '**/*Properties.class'
+    include '**/*Example.class'
+    include '**/*Examples.class'
+    include '**/*Test.class'
+    include '**/*Tests.class'
+
+    // testLogging.showStandardStreams = true
+}
+
+
+dependencies {
+    api("org.opentest4j:opentest4j:${opentest4jVersion}")
+    api("net.jqwik:jqwik:${jqwikVersion}")
+    compileOnly("org.mockito:mockito-core:${mockitoVersion}")
+
+    testImplementation("org.assertj:assertj-core:${assertJVersion}")
+    testImplementation("org.mockito:mockito-junit-jupiter:${mockitoVersion}")
+}
+
+publishing {
+    repositories {
+        maven {
+            // hint: password is in ~/.gradle/gradle.properties
+            def ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : ''
+            def ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : ''
+
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            url = isSnapshotRelease ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+    publications {
+        jqwikMockito(MavenPublication) {
+            groupId = 'net.jqwik'
+            artifactId = 'jqwik-mockito'
+            from components.java
+            pom {
+                groupId = 'net.jqwik'
+                name = 'jqwik-mockito'
+                description = "Jqwik Mockito support module"
+                url = 'https://github.org/jlink/jqwik-mockito'
+                licenses {
+                    license {
+                        name = 'Eclipse Public License - v 2.0'
+                        url = 'http://www.eclipse.org/legal/epl-v20.html'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'gtrefs'
+                        name = 'Gregor Trefs'
+                        email = 'Gregor.Trefs@gmail.com'
+                    }
+                    developer {
+                        id = 'jlink'
+                        name = 'Johannes Link'
+                        email = 'business@johanneslink.net'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/jlink/jqwik-mockito.git'
+                    developerConnection = 'scm:git:git://github.com/jlink/jqwik-mockito.git'
+                    url = 'https://github.com/jlink/jqwik-mockito'
+                }
+            }
+        }
+    }
+}
+
+signing {
+    if (!isSnapshotRelease) {
+        sign publishing.publications.jqwikMockito
+    }
+}
