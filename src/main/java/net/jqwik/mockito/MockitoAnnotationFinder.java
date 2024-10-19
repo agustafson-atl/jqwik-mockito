@@ -1,7 +1,6 @@
 package net.jqwik.mockito;
 
 import org.mockito.Captor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.internal.configuration.plugins.Plugins;
