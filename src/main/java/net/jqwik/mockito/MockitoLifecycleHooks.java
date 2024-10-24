@@ -14,7 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-public class MockitoExtension implements AroundPropertyHook, AroundTryHook {
+public class MockitoLifecycleHooks implements AroundPropertyHook, AroundTryHook {
     @Override
     public PropagationMode propagateTo() {
         return PropagationMode.ALL_DESCENDANTS;

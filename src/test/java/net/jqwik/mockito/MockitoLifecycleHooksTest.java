@@ -18,8 +18,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@AddLifecycleHook(MockitoExtension.class)
-class MockitoExtensionTest {
+@AddLifecycleHook(MockitoLifecycleHooks.class)
+class MockitoLifecycleHooksTest {
     @Mock
     private CountingService countingService;
     @InjectMocks
