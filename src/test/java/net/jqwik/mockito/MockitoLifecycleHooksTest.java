@@ -1,11 +1,8 @@
 package net.jqwik.mockito;
 
-import net.jqwik.api.Arbitraries;
-import net.jqwik.api.Arbitrary;
 import net.jqwik.api.Example;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
-import net.jqwik.api.Provide;
 import net.jqwik.api.lifecycle.AddLifecycleHook;
 import net.jqwik.mockito.testcase.AddingService;
 import net.jqwik.mockito.testcase.CountingService;
@@ -25,11 +22,6 @@ class MockitoLifecycleHooksTest {
 
     @InjectMocks
     private AddingService addingService;
-
-    @Provide
-    Arbitrary<String> stringProvider() {
-        return Arbitraries.of("a", "bb");
-    }
 
     @Example
     void checkBobs() {

@@ -12,9 +12,12 @@ import net.jqwik.api.lifecycle.TryLifecycleContext;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class MockitoLifecycleHooks implements AroundPropertyHook, AroundTryHook {
+    private Object[] mocks;
+
     @Override
     public PropagationMode propagateTo() {
         return PropagationMode.ALL_DESCENDANTS;
@@ -24,19 +27,18 @@ public class MockitoLifecycleHooks implements AroundPropertyHook, AroundTryHook 
     public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property)
             throws Throwable {
         try (AutoCloseable ignored = MockitoAnnotations.openMocks(context.testInstance())) {
+            // finds all mocked fields within the test instance object
+            mocks = MockitoAnnotationFinder.getMocks(context.testInstance()).toArray(new Object[0]);
             return property.execute();
         }
     }
 
     @Override
-    public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters)
-            throws Throwable {
-        final List<Object> mocks = MockitoAnnotationFinder.getMocks(context.testInstance());
-        final Object[] mocksArray = mocks.toArray(mocks.toArray(new Object[0]));
+    public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) {
         try {
             return aTry.execute(parameters);
         } finally {
-            Mockito.reset(mocksArray);
+            Mockito.reset(mocks);
         }
     }
 }
