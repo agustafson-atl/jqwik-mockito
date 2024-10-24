@@ -13,7 +13,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Helper class which extracts mocked fields from a given test instance.
+ */
 class MockitoAnnotationFinder {
+    /**
+     * The set of annotations which indicate that a field is a Mockito mock.
+     */
     private static final Set<Class<? extends Annotation>> MOCKING_ANNOTATION_TYPES;
 
     static {
@@ -25,6 +31,13 @@ class MockitoAnnotationFinder {
 
     private static final MemberAccessor MEMBER_ACCESSOR = Plugins.getMemberAccessor();
 
+    /**
+     * Retrieve mocking fields for a given test instance object.
+     *
+     * @param testInstance The test instance which contains the mocked fields
+     * @return The list of mock objects which have been injected into the test instance
+     * @throws IllegalAccessException If it is not possible to get access to the fields in the test instance
+     */
     static List<Object> getMocks(Object testInstance) throws IllegalAccessException {
         final List<Object> mocks = new ArrayList<>();
         for (final Field field : testInstance.getClass().getDeclaredFields()) {
