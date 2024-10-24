@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class MockitoAnnotationFinder {
+class MockitoAnnotationFinder {
     private static final Set<Class<? extends Annotation>> MOCKING_ANNOTATION_TYPES;
 
     static {
@@ -25,7 +25,7 @@ public class MockitoAnnotationFinder {
 
     private static final MemberAccessor MEMBER_ACCESSOR = Plugins.getMemberAccessor();
 
-    public static List<Object> getMocks(Object testInstance) throws IllegalAccessException {
+    static List<Object> getMocks(Object testInstance) throws IllegalAccessException {
         final List<Object> mocks = new ArrayList<>();
         for (final Field field : testInstance.getClass().getDeclaredFields()) {
             for (Annotation annotation : field.getAnnotations()) {
