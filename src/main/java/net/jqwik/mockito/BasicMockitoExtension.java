@@ -31,7 +31,10 @@ public class BasicMockitoExtension  implements AroundPropertyHook, AroundTryHook
     public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
         final List<Object> mocks = MockitoAnnotationFinder.getMocks(context.testInstance());
         final Object[] mocksArray = mocks.toArray(mocks.toArray(new Object[0]));
-        Mockito.reset(mocksArray);
-        return aTry.execute(parameters);
+        try {
+            return aTry.execute(parameters);
+        } finally {
+            Mockito.reset(mocksArray);
+        }
     }
 }
