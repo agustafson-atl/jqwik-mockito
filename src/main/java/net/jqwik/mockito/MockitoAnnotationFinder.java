@@ -15,6 +15,7 @@ import java.util.Set;
 
 public class MockitoAnnotationFinder {
     private static final Set<Class<? extends Annotation>> MOCKING_ANNOTATION_TYPES;
+
     static {
         MOCKING_ANNOTATION_TYPES = new HashSet<>();
         MOCKING_ANNOTATION_TYPES.add(Mock.class);

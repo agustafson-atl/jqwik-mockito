@@ -11,7 +11,8 @@ public class AddingService {
         System.out.println("ADDING: " + string1 + "; " + string2 + "; countingService = " + countingService);
         final int stringLength1 = countingService.stringLength(string1);
         final int stringLength2 = countingService.stringLength(string2);
-        System.out.println("ADDED: " + stringLength1 + "; " + stringLength2 + "; TOTAL = " + (stringLength1 + stringLength2));
+        System.out.println(
+                "ADDED: " + stringLength1 + "; " + stringLength2 + "; TOTAL = " + (stringLength1 + stringLength2));
         return stringLength1 + stringLength2;
     }
 }

@@ -2,6 +2,7 @@ plugins {
     id 'java-library'
     id 'maven-publish'
     id 'signing'
+    id("com.diffplug.spotless") version "6.13.0"
 }
 
 wrapper {
@@ -40,6 +41,15 @@ jar {
     }
 }
 
+spotless {
+    java {
+        palantirJavaFormat('1.1.0')
+
+        importOrder('', 'java|javax', '\\#')
+        removeUnusedImports()
+    }
+}
+
 java {
     withJavadocJar()
     withSourcesJar()
@@ -52,6 +62,10 @@ compileTestJava {
     options.encoding = 'UTF-8'
 }
 
+tasks.named("check") {
+    dependsOn(spotlessApply)
+}
+
 test {
     useJUnitPlatform {
         includeEngines 'jqwik'
@@ -62,8 +76,6 @@ test {
     include '**/*Examples.class'
     include '**/*Test.class'
     include '**/*Tests.class'
-
-    // testLogging.showStandardStreams = true
 }
 
 

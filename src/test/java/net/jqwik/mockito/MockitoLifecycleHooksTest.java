@@ -22,9 +22,9 @@ import static org.mockito.Mockito.when;
 class MockitoLifecycleHooksTest {
     @Mock
     private CountingService countingService;
+
     @InjectMocks
     private AddingService addingService;
-
 
     @Provide
     Arbitrary<String> stringProvider() {
@@ -57,7 +57,11 @@ class MockitoLifecycleHooksTest {
     }
 
     @Property
-    void checkTotalLength4Args(@ForAll final String string1, @ForAll final String string2, @ForAll final String string3, @ForAll final String string4) {
+    void checkTotalLength4Args(
+            @ForAll final String string1,
+            @ForAll final String string2,
+            @ForAll final String string3,
+            @ForAll final String string4) {
         when(countingService.stringLength(string1)).thenReturn(string1.length());
         when(countingService.stringLength(string2)).thenReturn(string2.length());
         when(countingService.stringLength(string3)).thenReturn(string3.length());
@@ -70,5 +74,4 @@ class MockitoLifecycleHooksTest {
 
         verify(countingService, times(4)).stringLength(anyString());
     }
-
 }

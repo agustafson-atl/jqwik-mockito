@@ -21,14 +21,16 @@ public class MockitoLifecycleHooks implements AroundPropertyHook, AroundTryHook 
     }
 
     @Override
-    public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property) throws Throwable {
+    public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor property)
+            throws Throwable {
         try (AutoCloseable ignored = MockitoAnnotations.openMocks(context.testInstance())) {
             return property.execute();
         }
     }
 
     @Override
-    public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters) throws Throwable {
+    public TryExecutionResult aroundTry(TryLifecycleContext context, TryExecutor aTry, List<Object> parameters)
+            throws Throwable {
         final List<Object> mocks = MockitoAnnotationFinder.getMocks(context.testInstance());
         final Object[] mocksArray = mocks.toArray(mocks.toArray(new Object[0]));
         try {
