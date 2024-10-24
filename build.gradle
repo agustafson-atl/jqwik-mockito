@@ -21,6 +21,7 @@ ext {
     assertJVersion = '3.26.3'
     mockitoVersion = '4.11.0' // Mockito 5+ no longer supports Java 8
     jqwikVersion = '1.9.1'
+    lombokVersion = '1.18.34'
     jqwikMockitoVersion = '0.0.1-SNAPSHOT'
     isSnapshotRelease = isSnapshotRelease(jqwikMockitoVersion)
 }
@@ -83,6 +84,9 @@ dependencies {
     api("org.opentest4j:opentest4j:${opentest4jVersion}")
     api("net.jqwik:jqwik:${jqwikVersion}")
     compileOnly("org.mockito:mockito-core:${mockitoVersion}")
+
+    testCompileOnly("org.projectlombok:lombok:${lombokVersion}")
+    testAnnotationProcessor("org.projectlombok:lombok:${lombokVersion}")
 
     testImplementation("org.junit.jupiter:junit-jupiter:${junitJupiterVersion}")
     testImplementation("org.assertj:assertj-core:${assertJVersion}")
