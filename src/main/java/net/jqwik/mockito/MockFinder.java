@@ -1,6 +1,5 @@
 package net.jqwik.mockito;
 
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockingDetails;
 import org.mockito.Mockito;
@@ -18,7 +17,18 @@ import java.util.Set;
 /**
  * Helper class which extracts mocked fields from a given test instance.
  */
-class MockitoAnnotationFinder {
+class MockFinder {
+    /**
+     * The set of annotations which indicate that a field is a Mockito mock.
+     */
+    private static final Set<Class<? extends Annotation>> MOCKING_ANNOTATION_TYPES;
+
+    static {
+        MOCKING_ANNOTATION_TYPES = new HashSet<>();
+        MOCKING_ANNOTATION_TYPES.add(Mock.class);
+        MOCKING_ANNOTATION_TYPES.add(Spy.class);
+    }
+
     private static final MemberAccessor MEMBER_ACCESSOR = Plugins.getMemberAccessor();
 
     /**
@@ -31,12 +41,25 @@ class MockitoAnnotationFinder {
     static List<Object> getMocks(Object testInstance) throws IllegalAccessException {
         final List<Object> mocks = new ArrayList<>();
         for (final Field field : testInstance.getClass().getDeclaredFields()) {
-            final Object fieldValue = MEMBER_ACCESSOR.get(field, testInstance);
-            final MockingDetails mockingDetails = Mockito.mockingDetails(fieldValue);
-            if (mockingDetails.isMock()) {
-                mocks.add(fieldValue);
+            if (isFieldMockitoAnnotated(field)) {
+                mocks.add(MEMBER_ACCESSOR.get(field, testInstance));
+            } else {
+                final Object fieldValue = MEMBER_ACCESSOR.get(field, testInstance);
+                final MockingDetails mockingDetails = Mockito.mockingDetails(fieldValue);
+                if (mockingDetails.isMock()) {
+                    mocks.add(fieldValue);
+                }
             }
         }
         return mocks;
+    }
+
+    private static boolean isFieldMockitoAnnotated(Field field) {
+        for (Annotation annotation : field.getAnnotations()) {
+            if (MOCKING_ANNOTATION_TYPES.contains(annotation.annotationType())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
