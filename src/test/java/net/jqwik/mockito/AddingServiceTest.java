@@ -7,24 +7,23 @@ import net.jqwik.api.lifecycle.AddLifecycleHook;
 import net.jqwik.mockito.testcase.AddingService;
 import net.jqwik.mockito.testcase.CountingService;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @AddLifecycleHook(MockitoLifecycleHooks.class)
-class MockitoLifecycleHooksTest {
-    @Mock
-    private CountingService countingService;
+class AddingServiceTest {
+    private final CountingService countingService = mock();
 
     @InjectMocks
     private AddingService addingService;
 
     @Example
-    void checkBobs() {
+    void checkSingleValue() {
         final String string1 = "a";
         final String string2 = "bb";
 
