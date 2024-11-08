@@ -13,7 +13,7 @@ fun isSnapshotRelease(versionString: String): Boolean {
     return versionString.endsWith("SNAPSHOT")
 }
 
-val githubProjectName = "jlink"
+val githubProjectName = "agustafson-atl"
 val artifactId = "jqwik-mockito"
 val moduleGroupId = "net.jqwik"
 val moduleName = "net.jqwik.mockito"
