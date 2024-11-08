@@ -12,6 +12,7 @@ import net.jqwik.api.lifecycle.TryLifecycleContext;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,10 +55,27 @@ public class MockitoLifecycleHooks implements AroundPropertyHook, AroundTryHook 
     @Override
     public PropertyExecutionResult aroundProperty(PropertyLifecycleContext context, PropertyExecutor propertyExecutor)
             throws Throwable {
-        try (AutoCloseable ignored = MockitoAnnotations.openMocks(context.testInstance())) {
-            // finds all mocked fields within the test instance object
-            mocks = MockFinder.getMocks(context.testInstance()).toArray(new Object[0]);
+        // finds all mocked fields within the test instance object
+        final List<AutoCloseable> mockitoCloseables = new ArrayList<>();
+        try {
+            final List<Object> mockList = new ArrayList<>();
+
+            for (final Object testInstance : context.testInstances()) {
+                // open all the annotated mocks, keeping track of the handle so that we can close them later
+                mockitoCloseables.add(MockitoAnnotations.openMocks(testInstance));
+                // find all of the mocks in each of the test instances and store them in a list, so that we can reset them between tries.
+                mockList.addAll(MockFinder.getMocks(testInstance));
+            }
+
+            mocks = mockList.toArray(new Object[0]);
             return propertyExecutor.execute();
+        } finally {
+            mockitoCloseables.forEach(mockitoCloseable -> {
+                try {
+                    mockitoCloseable.close();
+                } catch (final Exception ignored) {
+                }
+            });
         }
     }
 
