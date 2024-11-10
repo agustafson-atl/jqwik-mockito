@@ -8,12 +8,16 @@ implementation("net.jqwik:jqwik-mockito:${jqwikMockitoVersion}")
 ```
 
 ## Usage
+
 ```java
 import net.jqwik.api.lifecycle.AddLifecycleHook;
+import net.jqwik.api.*;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
+
+import static org.mockito.Mockito.*;
 
 @AddLifecycleHook(MockitoLifecycleHooks.class)
 class OrderServiceTest {
@@ -26,8 +30,26 @@ class OrderServiceTest {
     @Spy
     private ConsoleLoggingServiceImpl loggingService;
     private LoggingService loggingService2 = Mockito.spy(new ConsoleLoggingServiceImpl());
-    
+
     @InjectMock
     private OrderService orderService;
+
+    @Group
+    class BasicExamples {
+        @Example
+        void testBasicExample() {
+            when(orderRepository.getOrder(any())).thenReturn(null);
+            // testing code
+        }
+    }
+
+    @Group
+    class SomeProperties {
+        @Property
+        void testProperty() {
+            when(orderRepository.getOrder(any())).thenReturn("orderId");
+            // testing code
+        }
+    }
 }
 ```
